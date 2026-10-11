@@ -1,4 +1,4 @@
-# 🪐 VibeOS
+# 🚀 ExeTask
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
@@ -23,16 +23,16 @@ Before getting started, you need to have the following environment setup:
 
 ---
 
-## ⚙️ How to Use VibeOS From This Repository
+## ⚙️ How to Use ExeTask From This Repository
 
-Follow these step-by-step instructions to get VibeOS running locally on your computer.
+Follow these step-by-step instructions to get ExeTask running locally on your computer.
 
 ### Step 1: Download the Code
 Open this GitHub repository URL in your web browser, click the green **Code** button, and select **Download ZIP**. Extract the downloaded folder onto your computer.
 
 *Alternatively, if you are familiar with Git, you can open your terminal and run:*
 ```bash
-git clone <your-repo-url>
+git clone https://github.com
 ```
 
 ### Step 2: Install Node.js
