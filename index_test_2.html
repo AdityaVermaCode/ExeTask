@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>// VIBE_OS.EXE</title>
+    <!-- Importing beautiful crisp font -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #070708;
+            --text-main: #e2e2e4;
+            --text-muted: #646470;
+            --accent: #00ff66;      /* Cyber Neon Green */
+            --danger: #ff3333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'JetBrains Mono', monospace;
+            scrollbar-width: none; /* Hide scrollbar for clean look */
+        }
+
+        body {
+            /* Using a subtle dark gradient mesh so you can see the glass effect even if your wallpaper is black */
+            background: radial-gradient(circle at 80% 20%, #0f1410 0%, var(--bg-color) 60%), var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Frosted Glass Cyber Container */
+        .app-container {
+            /* Translucent dark panel background */
+            background: rgba(14, 14, 17, 0.65);
+            /* Heavy blur creates the soft glass depth */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            
+            width: 380px;
+            height: 580px;
+            /* Hairline glass border */
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        /* Minimal Header */
+        header {
+            margin-bottom: 24px;
+        }
+
+        .sys-status {
+            font-size: 0.65rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sys-status::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        h1 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        /* Glass Task Input */
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 12px 14px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: rgba(0, 255, 102, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.05);
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* List styling */
+        .task-list {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .task-item:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            user-select: none;
+            width: 85%;
+        }
+
+        /* Custom minimal indicator */
+        .indicator {
+            width: 6px;
+            height: 6px;
+            border: 1px solid var(--text-muted);
+            background: transparent;
+            display: inline-block;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            border-radius: 1px;
+        }
+
+        /* Completed Glass States */
+        .task-item.completed {
+            border-color: transparent;
+            background: transparent;
+        }
+
+        .task-item.completed .task-content {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            text-decoration-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .task-item.completed .indicator {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.15s ease, color 0.15s ease;
+            padding: 0 4px;
+        }
+
+        .task-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Footer Info */
+        footer {
+            margin-top: 16px;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <div class="sys-status">System Operational</div>
+            <h1>// local_tasks</h1>
+        </header>
+
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="execute new_task..." autocomplete="off">
+        </div>
+
+        <ul class="task-list" id="taskList">
+            <!-- Dynamic elements load here -->
+        </ul>
+
+        <footer>
+            <span id="taskCount">0 tasks loaded</span>
+            <span>v1.0.0</span>
+        </footer>
+    </div>
+
+    <script>
+        const taskInput = document.getElementById('taskInput');
+        const taskList = document.getElementById('taskList');
+        const taskCount = document.getElementById('taskCount');
+
+        let tasks = JSON.parse(localStorage.getItem('vibe_tasks')) || [];
+
+        function saveTasks() {
+            localStorage.setItem('vibe_tasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function addTask(text) {
+            if (!text.trim()) return;
+            tasks.push({
+                id: Date.now(),
+                text: text,
+                completed: false
+            });
+            taskInput.value = '';
+            saveTasks();
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(task => 
+                task.id === id ? { ...task, completed: !task.completed } : task
+            );
+            saveTasks();
+        }
+
+        function deleteTask(id, e) {
+            e.stopPropagation(); 
+            tasks = tasks.filter(task => task.id !== id);
+            saveTasks();
+        }
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                li.onclick = () => toggleTask(task.id);
+
+                li.innerHTML = `
+                    <div class="task-content">
+                        <span class="indicator"></span>
+                        <span>${task.text}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTask(${task.id}, event)">[del]</button>
+                `;
+                taskList.appendChild(li);
+            });
+
+            const activeCount = tasks.filter(t => !t.completed).length;
+            taskCount.innerText = `${activeCount} active sequence${activeCount !== 1 ? 's' : ''}`;
+        }
+
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTask(taskInput.value);
+            }
+        });
+
+        renderTasks();
+    </script>
+</body>
+</html>

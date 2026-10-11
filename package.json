@@ -1,0 +1,32 @@
+{
+  "name": "vibeos",
+  "version": "1.0.0",
+  "description": "Minimal aesthetic vibe task manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "make": "electron-forge make"
+  },
+  "keywords": [],
+  "author": "adity",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@electron-forge/cli": "^8.0.1",
+    "@electron-forge/maker-squirrel": "^8.0.1",
+    "electron": "^44.7.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "vibeos"
+          }
+        }
+      ]
+    }
+  }
+}
