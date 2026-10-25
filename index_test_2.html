@@ -239,6 +239,7 @@
             font: inherit;
         }
 
+        
         #pageTabs {
             display: flex;
             align-items: center;
@@ -246,8 +247,14 @@
             flex: 1;
             min-width: 0;
             overflow-x: auto;
-            scrollbar-width: thin;
+            overflow-y: hidden;
+            scrollbar-width: none;
         }
+
+        #pageTabs::-webkit-scrollbar {
+            display: none;
+        }
+
         
         #pageDropdown {
             width: 90px;
@@ -271,8 +278,75 @@
         .page-navigation button:hover {
             border-color: #00ff88;
         }
+
+
+        .page-dialog {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .page-dialog-content {
+            width: 100%;
+            max-width: 300px;
+            background: #101010;
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .page-dialog-content h3 {
+            color: #00ff88;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin: 0 0 16px;
+        }
+
+        #pageNameInput {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            background: #080808;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        #pageNameInput:focus {
+            border-color: #00ff88;
+        }
+
+        .page-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .page-dialog-actions button {
+            background: #151515;
+            color: #00ff88;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .page-dialog-actions button:hover {
+            border-color: #00ff88;
+        }
+
     </style>
 </head>
+
 <body>
 
     <div class="app-container">
@@ -303,6 +377,22 @@
             <span id="taskCount">0 tasks loaded</span>
             <span>v1.0.0</span>
         </footer>
+    </div>
+
+    <div id="pageNameDialog" class="page-dialog" style="display: none;">
+        <div class="page-dialog-content">
+            <h3>CREATE NEW PAGE</h3>
+            <input
+                type="text"
+                id="pageNameInput"
+                placeholder="Enter page name..."
+                autocomplete="off"
+            >
+            <div class="page-dialog-actions">
+                <button id="cancelPage">CANCEL</button>
+                <button id="confirmPage">CREATE</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -348,6 +438,10 @@
                     tab.classList.add('active-page');
                 }
 
+                tab.addEventListener('click', () => {
+                    switchPage(page.id);
+                });
+
                 pageTabs.appendChild(tab);
 
                 const option = document.createElement('option');
@@ -357,7 +451,66 @@
 
                 pageDropdown.appendChild(option);
             });
+            pageDropdown.onchange = (event) => {
+                switchPage(event.target.value);
+            };
         }
+
+
+        function switchPage(pageId) {
+            const selectedPage = pages.find(page => page.id === pageId);
+
+            if (!selectedPage) return;
+
+            activePageId = selectedPage.id;
+            activePage = selectedPage;
+            tasks = activePage.tasks;
+
+            localStorage.setItem('vibe_active_page', activePageId);
+
+            renderTasks();
+            renderPages();
+        }
+
+
+        
+        function createPage() {
+            const pageName = document.getElementById('pageNameInput').value.trim();
+
+            if (!pageName) {
+                document.getElementById('pageNameInput').focus();
+                return;
+            }
+
+            const newPage = {
+                id: Date.now().toString(),
+                name: pageName,
+                tasks: []
+            };
+
+            pages.push(newPage);
+            localStorage.setItem('vibe_pages', JSON.stringify(pages));
+
+            document.getElementById('pageNameInput').value = '';
+            document.getElementById('pageNameDialog').style.display = 'none';
+
+            switchPage(newPage.id);
+        }
+
+
+
+        function navigatePage(direction) {
+            const currentIndex = pages.findIndex(
+                page => page.id === activePageId
+            );
+
+            const nextIndex = currentIndex + direction;
+
+            if (nextIndex < 0 || nextIndex >= pages.length) return;
+
+            switchPage(pages[nextIndex].id);
+        }
+
 
 
         function addTask(text) {
@@ -414,6 +567,35 @@
 
         renderTasks();
         renderPages();
+        
+        document.getElementById('addPage').addEventListener('click', () => {
+            document.getElementById('pageNameDialog').style.display = 'flex';
+            document.getElementById('pageNameInput').value = '';
+            document.getElementById('pageNameInput').focus();
+        });
+
+        document.getElementById('confirmPage').addEventListener('click', createPage);
+
+        document.getElementById('cancelPage').addEventListener('click', () => {
+            document.getElementById('pageNameDialog').style.display = 'none';
+        });
+
+        document.getElementById('pageNameInput').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') createPage();
+
+            if (event.key === 'Escape') {
+                document.getElementById('pageNameDialog').style.display = 'none';
+            }
+        });
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            navigatePage(-1);
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            navigatePage(1);
+        });
     </script>
+
 </body>
 </html>
