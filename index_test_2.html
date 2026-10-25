@@ -248,10 +248,24 @@
         const taskList = document.getElementById('taskList');
         const taskCount = document.getElementById('taskCount');
 
-        let tasks = JSON.parse(localStorage.getItem('vibe_tasks')) || [];
+        let pages = JSON.parse(localStorage.getItem('vibe_pages')) || [];
+
+        if (pages.length === 0) {
+            pages = [{
+                id: 'default',
+                name: 'My Tasks',
+                tasks: JSON.parse(localStorage.getItem('vibe_tasks')) || []
+            }];
+            localStorage.setItem('vibe_pages', JSON.stringify(pages));
+        }
+
+        let activePageId = localStorage.getItem('vibe_active_page') || pages[0].id;
+        let activePage = pages.find(page => page.id === activePageId) || pages[0];
+        let tasks = activePage.tasks;
 
         function saveTasks() {
-            localStorage.setItem('vibe_tasks', JSON.stringify(tasks));
+            activePage.tasks = tasks;
+            localStorage.setItem('vibe_pages', JSON.stringify(pages));
             renderTasks();
         }
 
