@@ -219,6 +219,58 @@
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+
+        .page-navigation {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+            min-width: 0;
+        }
+
+        .page-navigation button {
+            background: #151515;
+            color: #00ff88;
+            border: 1px solid #252525;
+            border-radius: 6px;
+            padding: 7px 10px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        #pageTabs {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            min-width: 0;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+        
+        #pageDropdown {
+            width: 90px;
+            min-width: 0;
+            background: #151515;
+            color: #00ff88;
+            border: 1px solid #252525;
+            border-radius: 6px;
+            padding: 7px 4px;
+            font: inherit;
+            outline: none;
+            color-scheme: dark;
+        }
+
+        #pageDropdown option {
+            background: #151515;
+            color: #00ff88;
+        }
+
+
+        .page-navigation button:hover {
+            border-color: #00ff88;
+        }
     </style>
 </head>
 <body>
@@ -228,6 +280,16 @@
             <div class="sys-status">System Operational</div>
             <h1>// local_tasks</h1>
         </header>
+
+
+        <div class="page-navigation">
+            <button id="prevPage" type="button">‹</button>
+            <div id="pageTabs"></div>
+            <button id="nextPage" type="button">›</button>
+            <select id="pageDropdown" aria-label="Select page"></select>
+            <button id="addPage" type="button">+</button>
+        </div>
+
 
         <div class="input-group">
             <input type="text" id="taskInput" placeholder="execute new_task..." autocomplete="off">
@@ -268,6 +330,35 @@
             localStorage.setItem('vibe_pages', JSON.stringify(pages));
             renderTasks();
         }
+
+
+        function renderPages() {
+            const pageTabs = document.getElementById('pageTabs');
+            const pageDropdown = document.getElementById('pageDropdown');
+
+            pageTabs.innerHTML = '';
+            pageDropdown.innerHTML = '';
+
+            pages.forEach(page => {
+                const tab = document.createElement('button');
+                tab.type = 'button';
+                tab.textContent = page.name;
+
+                if (page.id === activePageId) {
+                    tab.classList.add('active-page');
+                }
+
+                pageTabs.appendChild(tab);
+
+                const option = document.createElement('option');
+                option.value = page.id;
+                option.textContent = page.name;
+                option.selected = page.id === activePageId;
+
+                pageDropdown.appendChild(option);
+            });
+        }
+
 
         function addTask(text) {
             if (!text.trim()) return;
@@ -322,6 +413,7 @@
         });
 
         renderTasks();
+        renderPages();
     </script>
 </body>
 </html>
